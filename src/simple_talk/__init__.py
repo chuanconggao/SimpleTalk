@@ -14,6 +14,7 @@ class Synthesizer(StrEnum):
 class SimpleTalk:
     def __init__(
         self,
+        *,
         voice: str | None = None,
         synthesizer: Synthesizer = Synthesizer.MAC_OS,
     ) -> None:
@@ -28,9 +29,23 @@ class SimpleTalk:
         self,
         text: str,
         filename: str,
-    ) -> None:
-        if self.__synthesizer == Synthesizer.MAC_OS:
-            run(args=[
+    ) -> str:
+        match self.__synthesizer:
+            case Synthesizer.MAC_OS:
+                return self.__talk_macos(text, filename)
+            case Synthesizer.ESPEAK_NG:
+                return self.__talk_espeak(text, filename)
+            case _:
+                msg = "The specified synthesizer is not implemented yet."
+                raise NotImplementedError(msg)
+
+    def __talk_macos(
+        self,
+        text: str,
+        filename: str,
+    ) -> str:
+        run(
+            args=[
                 "say",
                 text,
                 # Specify voice if necessary
@@ -44,9 +59,19 @@ class SimpleTalk:
                 "--file-format=mp4f",
                 "-o",
                 filename + ".mp4",
-            ], check=True)
-        elif self.__synthesizer == Synthesizer.ESPEAK_NG:
-            run(args=[
+            ],
+            check=True,
+        )
+
+        return filename + ".mp4"
+
+    def __talk_espeak(
+        self,
+        text: str,
+        filename: str,
+    ) -> str:
+        run(
+            args=[
                 "espeak-ng",
                 text,
                 # Specify voice if necessary
@@ -59,7 +84,8 @@ class SimpleTalk:
                 ),
                 "-w",
                 filename + ".wav",
-            ], check=True)
-        else:
-            msg = "The specified synthesizer is not implemented yet."
-            raise NotImplementedError(msg)
+            ],
+            check=True,
+        )
+
+        return filename + ".wav"
