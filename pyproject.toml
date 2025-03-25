@@ -22,6 +22,11 @@ dev = [
 [project.urls]
 Repository = "https://github.com/chuanconggao/SimpleTalk/"
 
+[project.optional-dependencies]
+polly = [
+    "boto3>=1.37.19",
+]
+
 [tool.coverage.run]
 source = [
     "src",

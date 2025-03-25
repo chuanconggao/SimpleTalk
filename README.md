@@ -10,6 +10,14 @@ It supports following synthesizers:
 - eSpeak NG
   - Requires installing eSpeak NG CLI first.
   - Outputs wav file.
+- Amazon Polly
+  - Requires installing with extra `simple-talk[polly]`
+  - Must specify [engine and voice](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/polly/client/synthesize_speech.html)
+  - Outputs mp3 file.
+
+# How to Install
+
+It is available on PyPI under name [`simple-talk`](https://pypi.org/project/simple-talk/).
 
 # How to Use
 
