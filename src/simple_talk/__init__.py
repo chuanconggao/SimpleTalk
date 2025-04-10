@@ -6,12 +6,6 @@ from pathlib import Path
 from subprocess import run
 from typing import Any
 
-try:
-    import boto3
-    polly_client: Any = boto3.client("polly")
-except ImportError:
-    polly_client = None
-
 
 class Synthesizer(StrEnum):
     AMAZON_POLLY = "AMAZON_POLLY"
@@ -32,9 +26,8 @@ class SimpleTalk:
             raise ValueError(msg)
 
         if synthesizer == Synthesizer.AMAZON_POLLY:
-            if not polly_client:
-                msg = "You must install this package with extra for Amazon Polly."
-                raise ValueError(msg)
+            import boto3
+            self.__polly_client = boto3.client("polly")
 
             if not voice or not engine:
                 msg = "You must specify engine and voice for Amazon Polly."
@@ -115,7 +108,7 @@ class SimpleTalk:
         text: str,
         filename: str,
     ) -> str:
-        response: dict[str, Any] = polly_client.synthesize_speech(
+        response: dict[str, Any] = self.__polly_client.synthesize_speech(
             OutputFormat="mp3",
             Text=text,
             VoiceId=self.__voice,
