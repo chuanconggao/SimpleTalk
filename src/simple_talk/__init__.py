@@ -2,9 +2,14 @@ from __future__ import annotations
 
 import sys
 from enum import StrEnum
+from os import path
 from pathlib import Path
 from subprocess import run
+from tempfile import gettempdir
 from typing import Any
+from uuid import uuid4
+
+from moviepy.audio.io.AudioFileClip import AudioFileClip
 
 
 class Synthesizer(StrEnum):
@@ -39,18 +44,23 @@ class SimpleTalk:
     def talk(
         self,
         text: str,
-        filename: str,
-    ) -> str:
+        filename: str | None = None,
+    ) -> str | AudioFileClip:
+        return_clip: bool = filename is None
+        filename = filename or path.join(gettempdir(), str(uuid4()))
+
         match self.__synthesizer:
             case Synthesizer.MAC_OS:
-                return self.__talk_macos(text, filename)
+                filename = self.__talk_macos(text, filename)
             case Synthesizer.ESPEAK_NG:
-                return self.__talk_espeak(text, filename)
+                filename = self.__talk_espeak(text, filename)
             case Synthesizer.AMAZON_POLLY:
-                return self.__talk_polly(text, filename)
+                filename = self.__talk_polly(text, filename)
             case _:
                 msg = "The specified synthesizer is not implemented yet."
                 raise NotImplementedError(msg)
+
+        return AudioFileClip(filename) if return_clip else filename
 
     def __talk_macos(
         self,
