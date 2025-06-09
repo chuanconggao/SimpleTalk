@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import multiprocessing
 import sys
 from enum import StrEnum
 from os import path
@@ -10,6 +11,7 @@ from typing import Any
 from uuid import uuid4
 
 from moviepy.audio.io.AudioFileClip import AudioFileClip
+from nltk import PunktSentenceTokenizer
 
 
 class Synthesizer(StrEnum):
@@ -31,7 +33,7 @@ class SimpleTalk:
             raise ValueError(msg)
 
         if synthesizer == Synthesizer.AMAZON_POLLY:
-            import boto3
+            import boto3  # noqa: PLC0415
             self.__polly_client = boto3.client("polly")
 
             if not voice or not engine:
@@ -61,6 +63,34 @@ class SimpleTalk:
                 raise NotImplementedError(msg)
 
         return AudioFileClip(filename) if return_clip else filename
+
+    def talk_by_sentence(
+        self,
+        text: str,
+        filename_prefix: str | None = None,
+        *,
+        parallel_factor: int | None = None,
+    ) -> list[tuple[str, str | AudioFileClip]]:
+        args: list[tuple[str, str | None]] = [
+            (
+                sentence,
+                f"{filename_prefix}{i}" if filename_prefix else None,
+            )
+            for i, sentence in enumerate(
+                PunktSentenceTokenizer().tokenize(text),
+                start=1,
+            )
+        ]
+
+        with multiprocessing.Pool(processes=parallel_factor) as pool:
+            return [
+                (sentence, audio)
+                for (sentence, _), audio in zip(
+                    args,
+                    pool.starmap(self.talk, args),
+                    strict=True,
+                )
+            ]
 
     def __talk_macos(
         self,
