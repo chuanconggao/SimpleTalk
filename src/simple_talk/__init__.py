@@ -10,8 +10,8 @@ from tempfile import gettempdir
 from typing import Any
 from uuid import uuid4
 
+from extratools_text import text_to_sentences
 from moviepy.audio.io.AudioFileClip import AudioFileClip
-from nltk import PunktSentenceTokenizer
 
 
 class Synthesizer(StrEnum):
@@ -77,7 +77,7 @@ class SimpleTalk:
                 f"{filename_prefix}{i}" if filename_prefix else None,
             )
             for i, sentence in enumerate(
-                PunktSentenceTokenizer().tokenize(text),
+                text_to_sentences(text),
                 start=1,
             )
         ]

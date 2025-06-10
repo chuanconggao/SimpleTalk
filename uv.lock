@@ -134,6 +134,18 @@ wheels = [
 ]
 
 [[package]]
+name = "extratools-text"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "nltk" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/be/7d/4bb39a559ed72bf40cda1dfa4aa6743a1d7fe1969faf83fac3f807288dda/extratools_text-0.1.0.tar.gz", hash = "sha256:b323422947572a713090b95db7e416ffe53ba6995391e6b82e88a241fd1b15f4", size = 26329, upload-time = "2025-06-10T02:05:34.922Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2f/7e/00fda3a03dcbd98f5eb7a7ff59f2500c259a176347eea0cf26f6e0e7949b/extratools_text-0.1.0-py3-none-any.whl", hash = "sha256:e6bf82416c8548b2b6abd5da0df79e83d58f458a2027ef59bb7a94292dc1057b", size = 2127, upload-time = "2025-06-10T02:05:33.772Z" },
+]
+
+[[package]]
 name = "imageio"
 version = "2.37.0"
 source = { registry = "https://pypi.org/simple" }
@@ -631,11 +643,11 @@ wheels = [
 
 [[package]]
 name = "simple-talk"
-version = "0.1.4"
+version = "0.1.5"
 source = { editable = "." }
 dependencies = [
+    { name = "extratools-text" },
     { name = "moviepy" },
-    { name = "nltk" },
 ]
 
 [package.optional-dependencies]
@@ -654,8 +666,8 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "boto3", marker = "extra == 'polly'", specifier = ">=1.37.19" },
+    { name = "extratools-text", specifier = ">=0.1.0" },
     { name = "moviepy", specifier = ">=2.2.1" },
-    { name = "nltk", specifier = ">=3.9.1" },
 ]
 provides-extras = ["polly"]
 

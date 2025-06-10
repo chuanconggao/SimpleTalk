@@ -10,8 +10,8 @@ authors = [{ name = "Chuancong Gao", email = "chuanconggao@users.noreply.github.
 requires-python = ">=3.11"
 readme = "README.md"
 dependencies = [
+    "extratools-text>=0.1.0",
     "moviepy>=2.2.1",
-    "nltk>=3.9.1",
 ]
 
 [dependency-groups]
