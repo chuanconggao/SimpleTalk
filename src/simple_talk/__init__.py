@@ -71,10 +71,16 @@ class SimpleTalk:
         *,
         parallel_factor: int | None = None,
     ) -> list[tuple[str, str | AudioFileClip]]:
+        return_clip: bool = filename_prefix is None
+        # Must explicitly set filename prefix here
+        # Otherwise, `AudioClip` is returned by it cannot be pickled for `multiprocessing`.
+        # As a bonus, all the temporary files will also share same filename prefix.
+        filename_prefix = filename_prefix or path.join(gettempdir(), str(uuid4())) + "_s"
+
         args: list[tuple[str, str | None]] = [
             (
                 sentence,
-                f"{filename_prefix}{i}" if filename_prefix else None,
+                f"{filename_prefix}{i}",
             )
             for i, sentence in enumerate(
                 text_to_sentences(text),
@@ -84,7 +90,7 @@ class SimpleTalk:
 
         with multiprocessing.Pool(processes=parallel_factor) as pool:
             return [
-                (sentence, audio)
+                (sentence, AudioFileClip(audio) if return_clip else audio)
                 for (sentence, _), audio in zip(
                     args,
                     pool.starmap(self.talk, args),
