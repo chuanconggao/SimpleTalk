@@ -15,9 +15,13 @@ It supports following synthesizers:
   - Must specify [engine and voice](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/polly/client/synthesize_speech.html)
   - Outputs mp3 file.
 
+By default, it automatically normalizes audio volume and outputs mp3 file.
+
 # How to Install
 
 It is available on PyPI under name [`simple-talk`](https://pypi.org/project/simple-talk/).
+
+You also need to install Spacy model by `pip install $(spacy info en_core_web_trf --url)`.
 
 # How to Use
 
