@@ -302,6 +302,18 @@ wheels = [
 ]
 
 [[package]]
+name = "extratools-av"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "moviepy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/29/2e/b3465ac308e84dc6ed6da30f730be4d28509eb6a2f58500b2f73000ba36b/extratools_av-0.1.0.tar.gz", hash = "sha256:f6ff78766692a66eb01f349a77f6d90d6b50b2101af63aeb22378b51ee0bc7ad", size = 55491, upload-time = "2025-06-14T04:07:03.797Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b0/5a/30602461df3fc390a05f7e3f4e301a9e63386306a6a4a2a9d862fbf62148/extratools_av-0.1.0-py3-none-any.whl", hash = "sha256:bf4d96dd1abec87d886467155698f0c7e530d4f1a012b6555ee23370294b2a63", size = 3267, upload-time = "2025-06-14T04:07:02.699Z" },
+]
+
+[[package]]
 name = "extratools-text"
 version = "0.1.3"
 source = { registry = "https://pypi.org/simple" }
@@ -1105,6 +1117,7 @@ name = "simple-talk"
 version = "0.1.7"
 source = { editable = "." }
 dependencies = [
+    { name = "extratools-av" },
     { name = "extratools-text" },
     { name = "moviepy" },
 ]
@@ -1125,6 +1138,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "boto3", marker = "extra == 'polly'", specifier = ">=1.37.19" },
+    { name = "extratools-av", specifier = ">=0.1.0" },
     { name = "extratools-text", specifier = ">=0.1.1" },
     { name = "moviepy", specifier = ">=2.2.1" },
 ]

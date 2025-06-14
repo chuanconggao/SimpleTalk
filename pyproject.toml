@@ -10,6 +10,7 @@ authors = [{ name = "Chuancong Gao", email = "chuanconggao@users.noreply.github.
 requires-python = ">=3.11"
 readme = "README.md"
 dependencies = [
+    "extratools-av>=0.1.0",
     "extratools-text>=0.1.1",
     "moviepy>=2.2.1",
 ]

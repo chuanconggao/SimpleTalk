@@ -5,11 +5,13 @@ import sys
 from enum import StrEnum
 from os import path
 from pathlib import Path
+from shutil import move
 from subprocess import run
 from tempfile import gettempdir
 from typing import Any
 from uuid import uuid4
 
+from extratools_av.audio import normalize as normalize_volume
 from extratools_text import text_to_sentences
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 
@@ -27,6 +29,7 @@ class SimpleTalk:
         voice: str | None = None,
         synthesizer: Synthesizer = Synthesizer.MAC_OS,
         engine: str | None = None,
+        normalize_volume: bool = True,
     ) -> None:
         if synthesizer == Synthesizer.MAC_OS and sys.platform != "darwin":
             msg = "You must run the specified synthesizer on macOS."
@@ -42,6 +45,7 @@ class SimpleTalk:
 
         self.__voice: str | None = voice
         self.__synthesizer: Synthesizer = synthesizer
+        self.__normalize_volume: bool = normalize_volume
 
     def talk(
         self,
@@ -61,6 +65,11 @@ class SimpleTalk:
             case _:
                 msg = "The specified synthesizer is not implemented yet."
                 raise NotImplementedError(msg)
+
+        if self.__normalize_volume:
+            normalized_clip = normalize_volume(filename)
+            normalized_clip.write_audiofile(filename + ".tmp.mp3")
+            move(filename + ".tmp.mp3", filename)
 
         return AudioFileClip(filename) if return_clip else filename
 
