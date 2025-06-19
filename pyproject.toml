@@ -13,6 +13,7 @@ dependencies = [
     "extratools-av>=0.1.0",
     "extratools-text>=0.1.1",
     "moviepy>=2.2.1",
+    "textstat>=0.7.7",
 ]
 
 [dependency-groups]
