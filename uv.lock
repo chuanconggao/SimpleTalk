@@ -1272,7 +1272,7 @@ wheels = [
 
 [[package]]
 name = "simple-talk"
-version = "0.1.9"
+version = "0.1.10"
 source = { editable = "." }
 dependencies = [
     { name = "extratools-av" },
