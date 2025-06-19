@@ -51,26 +51,33 @@ class SimpleTalk:
     def talk(
         self,
         text: str,
-        filename: str | None = None,
+        filename_prefix: str | None = None,
     ) -> str | AudioFileClip:
-        return_clip: bool = filename is None
-        filename = filename or path.join(gettempdir(), str(uuid4()))
+        return_clip: bool = filename_prefix is None
+        filename_prefix = filename_prefix or path.join(gettempdir(), str(uuid4()))
 
+        filename: str
         match self.__synthesizer:
             case Synthesizer.MAC_OS:
-                filename = self.__talk_macos(text, filename)
+                filename = self.__talk_macos(text, filename_prefix)
             case Synthesizer.ESPEAK_NG:
-                filename = self.__talk_espeak(text, filename)
+                filename = self.__talk_espeak(text, filename_prefix)
             case Synthesizer.AMAZON_POLLY:
-                filename = self.__talk_polly(text, filename)
+                filename = self.__talk_polly(text, filename_prefix)
             case _:
                 msg = "The specified synthesizer is not implemented yet."
                 raise NotImplementedError(msg)
 
         if self.__normalize_volume:
             normalized_clip = normalize_volume(filename)
-            normalized_clip.write_audiofile(filename + ".tmp.mp3")
-            move(filename + ".tmp.mp3", filename)
+
+            temp_filename: str = filename_prefix + ".tmp.mp3"
+            normalized_clip.write_audiofile(temp_filename)
+
+            Path(filename).unlink()
+
+            filename = filename_prefix + ".mp3"
+            move(temp_filename, filename)
 
         return AudioFileClip(filename) if return_clip else filename
 
@@ -112,7 +119,7 @@ class SimpleTalk:
     def __talk_macos(
         self,
         text: str,
-        filename: str,
+        filename_prefix: str,
     ) -> str:
         run(
             args=[
@@ -128,17 +135,17 @@ class SimpleTalk:
                 ),
                 "--file-format=mp4f",
                 "-o",
-                filename + ".mp4",
+                filename_prefix + ".mp4",
             ],
             check=True,
         )
 
-        return filename + ".mp4"
+        return filename_prefix + ".mp4"
 
     def __talk_espeak(
         self,
         text: str,
-        filename: str,
+        filename_prefix: str,
     ) -> str:
         run(
             args=[
@@ -153,17 +160,17 @@ class SimpleTalk:
                     else []
                 ),
                 "-w",
-                filename + ".wav",
+                filename_prefix + ".wav",
             ],
             check=True,
         )
 
-        return filename + ".wav"
+        return filename_prefix + ".wav"
 
     def __talk_polly(
         self,
         text: str,
-        filename: str,
+        filename_prefix: str,
     ) -> str:
         response: dict[str, Any] = self.__polly_client.synthesize_speech(
             OutputFormat="mp3",
@@ -171,6 +178,6 @@ class SimpleTalk:
             VoiceId=self.__voice,
         )
 
-        Path(filename + ".mp3").write_bytes(response["AudioStream"].read())
+        Path(filename_prefix + ".mp3").write_bytes(response["AudioStream"].read())
 
-        return filename + ".mp3"
+        return filename_prefix + ".mp3"
