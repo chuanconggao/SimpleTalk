@@ -12,8 +12,9 @@ from typing import Any
 from uuid import uuid4
 
 from extratools_av.audio import normalize as normalize_volume
-from extratools_text import text_to_sentences
 from moviepy.audio.io.AudioFileClip import AudioFileClip
+
+from .helpers import text_to_sentences_with_min_duration
 
 
 class Synthesizer(StrEnum):
@@ -92,7 +93,8 @@ class SimpleTalk:
                 f"{filename_prefix}{i}",
             )
             for i, sentence in enumerate(
-                text_to_sentences(text),
+                # MoviePy cannot handle audio clip less than one second
+                text_to_sentences_with_min_duration(text, 1, buffer=0.2),
                 start=1,
             )
         ]
